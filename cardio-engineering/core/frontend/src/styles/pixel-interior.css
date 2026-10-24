@@ -1,0 +1,393 @@
+/* =============================================================================
+   Interior pixel theme.
+
+   Every route except "/" (the landing page) is marked data-surface="interior"
+   by the router (see main.tsx). These pages take the landing page's identity:
+   a near-black void, hairline squares, the five-colour pixel ramp, Inter for
+   text, and JetBrains Mono for labels. No glass, blur, gradients, or glow.
+
+   Everything here is scoped to html[data-surface="interior"], so the landing
+   page keeps its own styles. Palette utilities (text-cyan-400, bg-rose-950/40,
+   and so on) are remapped in pixel-interior-palette.css, which is generated.
+   ============================================================================= */
+
+/* ---------- Tokens: landing values, available on every interior page ---------- */
+
+html[data-surface="interior"] {
+  --void: #0D0E10;
+  --panel: #141518;
+  --panel-2: #1B1C20;
+  --line: #292A2E;
+  --line-hi: #404147;
+  --bone: #F7F7F4;
+  --body: #C9CACE;
+  --muted: #96979E;
+  --faint: #707178;
+  --p-red: #F0442B;
+  --p-orange: #FF7900;
+  --p-yellow: #FFB400;
+  --p-blue: #39A9E8;
+  --p-green: #59DFA6;
+
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "Geist Mono", ui-monospace, Menlo, monospace;
+}
+
+html[data-surface="interior"]:not(.dark) {
+  --void: #FAFAF8;
+  --panel: #FFFFFF;
+  --panel-2: #F1F1EE;
+  --line: #E4E4E0;
+  --line-hi: #C6C6C0;
+  --bone: #141518;
+  --body: #3F4046;
+  --muted: #6E6F76;
+  --faint: #9A9BA2;
+  --p-red: #D63A22;
+  --p-orange: #E85D00;
+  --p-yellow: #C77F00;
+  --p-blue: #1D7FB8;
+  --p-green: #178A5F;
+}
+
+/* Semantic tokens read by Tailwind (surface-*, ink-*, accent-*, brand-*) and by glass.css. */
+html[data-surface="interior"].dark {
+  --surface-bg: 13 14 16;
+  --surface-raised: 20 21 24;
+  --surface-raised-hi: 27 28 32;
+  --surface-border: 41 42 46;
+  --surface-border-hi: 64 65 71;
+  --surface-panel: 20 21 24;
+
+  --ink-primary: 247 247 244;
+  --ink-body: 201 202 206;
+  --ink-muted: 150 151 158;
+  --ink-faint: 112 113 120;
+  --ink-invert: 13 14 16;
+
+  --accent-brand: 255 121 0;
+  --accent-brand-soft: 43 24 4;
+  --accent-brand-glow: 255 142 38;
+  --accent-cyan: 255 121 0;
+  --accent-blue: 57 169 232;
+  --accent-violet: 57 169 232;
+  --accent-green: 89 223 166;
+  --accent-red: 240 68 43;
+  --accent-amber: 255 180 0;
+
+  --pixel-red: 240 68 43;
+  --pixel-orange: 255 121 0;
+  --pixel-yellow: 255 180 0;
+  --pixel-blue: 57 169 232;
+  --pixel-green: 89 223 166;
+
+  --brand-50: 26 16 6;
+  --brand-100: 43 24 4;
+  --brand-200: 74 40 6;
+  --brand-300: 122 62 0;
+  --brand-400: 176 88 0;
+  --brand-500: 255 121 0;
+  --brand-600: 255 142 38;
+  --brand-700: 255 170 90;
+  --brand-800: 255 205 160;
+  --brand-900: 255 236 215;
+
+  --neon-cyan: 255 121 0;
+  --neon-violet: 255 180 0;
+  --neon-pink: 240 68 43;
+
+  --glass-fill: #141518;
+  --glass-fill-hi: #1B1C20;
+  --glass-edge: #292A2E;
+  --glass-edge-hi: #404147;
+  --glass-highlight: 0 0 0 0 transparent;
+  --glass-shadow: 0 0 0 0 transparent;
+  --glass-blur: blur(0);
+
+  --topbar-bg-plain: rgba(13, 14, 16, 0.94);
+  --topbar-bg-frosted: rgba(13, 14, 16, 0.96);
+  --selection-bg: rgba(255, 121, 0, 0.3);
+  --evidence-flash-bg: rgba(255, 121, 0, 0.12);
+  --evidence-flash-ring: rgba(255, 121, 0, 0.5);
+  --scrollbar-thumb: rgba(247, 247, 244, 0.14);
+  --scrollbar-thumb-hover: rgba(247, 247, 244, 0.28);
+  --grid-line: rgba(247, 247, 244, 0.035);
+}
+
+html[data-surface="interior"]:not(.dark) {
+  --surface-bg: 250 250 248;
+  --surface-raised: 255 255 255;
+  --surface-raised-hi: 241 241 238;
+  --surface-border: 228 228 224;
+  --surface-border-hi: 198 198 192;
+  --surface-panel: 255 255 255;
+
+  --ink-primary: 20 21 24;
+  --ink-body: 63 64 70;
+  --ink-muted: 110 111 118;
+  --ink-faint: 154 155 162;
+  --ink-invert: 255 255 255;
+
+  --accent-brand: 232 93 0;
+  --accent-brand-soft: 255 240 228;
+  --accent-brand-glow: 255 121 0;
+  --accent-cyan: 232 93 0;
+  --accent-blue: 29 127 184;
+  --accent-violet: 29 127 184;
+  --accent-green: 23 138 95;
+  --accent-red: 214 58 34;
+  --accent-amber: 199 127 0;
+
+  --pixel-red: 214 58 34;
+  --pixel-orange: 232 93 0;
+  --pixel-yellow: 199 127 0;
+  --pixel-blue: 29 127 184;
+  --pixel-green: 23 138 95;
+
+  --brand-50: 255 247 240;
+  --brand-100: 255 236 220;
+  --brand-200: 255 214 184;
+  --brand-300: 255 186 130;
+  --brand-400: 255 150 60;
+  --brand-500: 232 93 0;
+  --brand-600: 200 78 0;
+  --brand-700: 168 64 0;
+  --brand-800: 130 48 0;
+  --brand-900: 90 32 0;
+
+  --neon-cyan: 232 93 0;
+  --neon-violet: 199 127 0;
+  --neon-pink: 214 58 34;
+
+  --glass-fill: #FFFFFF;
+  --glass-fill-hi: #F1F1EE;
+  --glass-edge: #E4E4E0;
+  --glass-edge-hi: #C6C6C0;
+  --glass-highlight: 0 0 0 0 transparent;
+  --glass-shadow: 0 0 0 0 transparent;
+  --glass-blur: blur(0);
+
+  --topbar-bg-plain: rgba(250, 250, 248, 0.94);
+  --topbar-bg-frosted: rgba(250, 250, 248, 0.96);
+  --selection-bg: rgba(232, 93, 0, 0.25);
+  --evidence-flash-bg: rgba(232, 93, 0, 0.1);
+  --evidence-flash-ring: rgba(232, 93, 0, 0.45);
+  --scrollbar-thumb: rgba(20, 21, 24, 0.14);
+  --scrollbar-thumb-hover: rgba(20, 21, 24, 0.28);
+  --grid-line: rgba(20, 21, 24, 0.045);
+}
+
+html[data-surface="interior"] {
+  --radius-control: 2px;
+  --radius-panel: 2px;
+  --shadow-card: none;
+  --shadow-pop: none;
+  --shadow-raise: none;
+  --aurora-a: transparent;
+  --aurora-b: transparent;
+  --aurora-c: transparent;
+  --aurora-blur: 0px;
+}
+
+/* ---------- Canvas: void plus the landing's engineering grid ---------- */
+
+html[data-surface="interior"] body {
+  background-color: var(--void);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M8 0H0V8' fill='none' stroke='%23F7F7F4' stroke-opacity='.035'/%3E%3C/svg%3E");
+  background-size: 8px 8px;
+  background-attachment: scroll;
+  color: var(--body);
+  font-family: var(--font-sans);
+}
+
+html[data-surface="interior"]:not(.dark) body {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M8 0H0V8' fill='none' stroke='%23141518' stroke-opacity='.045'/%3E%3C/svg%3E");
+}
+
+html[data-surface="interior"] body::before {
+  display: none;
+}
+
+html[data-surface="interior"] ::selection {
+  background: var(--selection-bg);
+  color: var(--bone);
+}
+
+html[data-surface="interior"] :focus-visible {
+  outline: 2px solid var(--p-orange);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* ---------- Glass surfaces become flat, hairline panels ---------- */
+
+html[data-surface="interior"] .bg-surface-bg {
+  background-color: rgb(var(--surface-bg));
+}
+
+html[data-surface="interior"] .bg-surface-raised,
+html[data-surface="interior"] .bg-surface-raised-hi,
+html[data-surface="interior"] .bg-surface-panel {
+  background-color: rgb(var(--surface-raised));
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+
+html[data-surface="interior"] .border-surface-border,
+html[data-surface="interior"] .border-surface-border-hi {
+  border-color: rgb(var(--surface-border));
+}
+
+html[data-surface="interior"] .bg-accent-brand {
+  background-image: none;
+  background-color: var(--p-orange);
+  box-shadow: none;
+}
+
+/* Hub building blocks (.ci-*) from glass.css. */
+
+html[data-surface="interior"] .ci-glass {
+  position: relative;
+  border-radius: 2px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+
+html[data-surface="interior"] .ci-glass-interactive {
+  transition: border-color 160ms ease, color 160ms ease;
+}
+
+html[data-surface="interior"] .ci-glass-interactive:hover {
+  transform: none;
+  border-color: var(--line-hi);
+  box-shadow: none;
+}
+
+html[data-surface="interior"] .ci-gradient-text {
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  color: var(--p-orange);
+}
+
+html[data-surface="interior"] .ci-neon-number {
+  color: var(--bone);
+  text-shadow: none;
+}
+
+html[data-surface="interior"] .ci-chip {
+  border-radius: 2px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--body);
+  font-family: var(--font-mono);
+  box-shadow: none;
+}
+
+html[data-surface="interior"] .ci-chip[data-active="true"] {
+  border-color: var(--p-orange);
+  background: rgba(255, 121, 0, 0.12);
+  color: var(--bone);
+  box-shadow: none;
+}
+
+html[data-surface="interior"] .ci-scanline,
+html[data-surface="interior"] .ci-orb {
+  display: none;
+}
+
+html[data-surface="interior"] .ci-markdown {
+  color: var(--body);
+}
+
+html[data-surface="interior"] .ci-markdown h1,
+html[data-surface="interior"] .ci-markdown h2,
+html[data-surface="interior"] .ci-markdown h3 {
+  color: var(--bone);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+html[data-surface="interior"] .ci-markdown h2 {
+  border-bottom-color: var(--line);
+}
+
+html[data-surface="interior"] .ci-markdown a {
+  color: var(--p-orange);
+}
+
+html[data-surface="interior"] .ci-markdown code {
+  font-family: var(--font-mono);
+  background: var(--panel-2);
+  border-radius: 2px;
+}
+
+html[data-surface="interior"] .ci-markdown pre,
+html[data-surface="interior"] .ci-markdown .ci-table-wrap,
+html[data-surface="interior"] .ci-markdown img {
+  border-radius: 2px;
+  border-color: var(--line);
+  background: var(--panel);
+}
+
+html[data-surface="interior"] .ci-markdown th,
+html[data-surface="interior"] .ci-markdown td {
+  border-color: var(--line);
+}
+
+html[data-surface="interior"] .ci-markdown th {
+  background: rgba(255, 121, 0, 0.08);
+  color: var(--bone);
+}
+
+html[data-surface="interior"] .ci-markdown blockquote {
+  border-left-color: var(--p-orange);
+  color: var(--muted);
+}
+
+/* ---------- Neutralizers: no blur, gradients, glow, or rounded cards ---------- */
+
+html[data-surface="interior"] [class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html[data-surface="interior"] [class*="blur-"] {
+  filter: none !important;
+}
+
+/* Decorative blurred glows are positioned blobs. Without blur they read as hard boxes, so hide them. */
+html[data-surface="interior"] [class*="blur-"][class*="absolute"],
+html[data-surface="interior"] [class*="blur-"][class*="fixed"] {
+  display: none !important;
+}
+
+html[data-surface="interior"] [class*="bg-gradient-"] {
+  background-image: none !important;
+}
+
+html[data-surface="interior"] [class*="shadow-"]:not([class*="shadow-none"]) {
+  box-shadow: none !important;
+}
+
+html[data-surface="interior"] [class*="rounded"]:not([class*="rounded-full"]):not([class*="rounded-none"]) {
+  border-radius: 2px !important;
+}
+
+/* Default borders take the hairline colour. Zero specificity, so explicit border-* classes still win. */
+:where(html[data-surface="interior"]) :where(*) {
+  border-color: var(--line);
+}
+
+/* Sharp scrollbars that match the rest of the surface. */
+html[data-surface="interior"] ::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 0;
+}
+html[data-surface="interior"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}

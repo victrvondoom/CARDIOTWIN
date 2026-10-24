@@ -1,0 +1,398 @@
+{
+  "created_at": "2026-10-19T12:50:34+00:00",
+  "dataset": {
+    "name": "Extension of Z-Alizadeh Sani (UCI 411)",
+    "rows": 303,
+    "sha256": "b60472ecebdd4ea11d09b8a793711b8da2051fdf79eeae5b88f33269e4a02d37"
+  },
+  "protocol": {
+    "outer": "repeated stratified 5-fold x 3",
+    "stratify": "number of stenotic vessels",
+    "quick": false,
+    "cvp_grid": [
+      [
+        30,
+        30,
+        3
+      ],
+      [
+        30,
+        30,
+        10
+      ],
+      [
+        30,
+        30,
+        30
+      ],
+      [
+        30,
+        100,
+        3
+      ],
+      [
+        30,
+        100,
+        10
+      ],
+      [
+        30,
+        100,
+        30
+      ],
+      [
+        30,
+        300,
+        3
+      ],
+      [
+        30,
+        300,
+        10
+      ],
+      [
+        30,
+        300,
+        30
+      ],
+      [
+        100,
+        30,
+        3
+      ],
+      [
+        100,
+        30,
+        10
+      ],
+      [
+        100,
+        30,
+        30
+      ],
+      [
+        100,
+        100,
+        3
+      ],
+      [
+        100,
+        100,
+        10
+      ],
+      [
+        100,
+        100,
+        30
+      ],
+      [
+        100,
+        300,
+        3
+      ],
+      [
+        100,
+        300,
+        10
+      ],
+      [
+        100,
+        300,
+        30
+      ],
+      [
+        300,
+        30,
+        3
+      ],
+      [
+        300,
+        30,
+        10
+      ],
+      [
+        300,
+        30,
+        30
+      ],
+      [
+        300,
+        100,
+        3
+      ],
+      [
+        300,
+        100,
+        10
+      ],
+      [
+        300,
+        100,
+        30
+      ],
+      [
+        300,
+        300,
+        3
+      ],
+      [
+        300,
+        300,
+        10
+      ],
+      [
+        300,
+        300,
+        30
+      ]
+    ],
+    "xgboost_grid": [
+      {
+        "max_depth": 2,
+        "n_estimators": 100
+      },
+      {
+        "max_depth": 2,
+        "n_estimators": 300
+      },
+      {
+        "max_depth": 3,
+        "n_estimators": 100
+      },
+      {
+        "max_depth": 3,
+        "n_estimators": 300
+      },
+      {
+        "max_depth": 4,
+        "n_estimators": 100
+      },
+      {
+        "max_depth": 4,
+        "n_estimators": 300
+      }
+    ],
+    "conformal_alpha": 0.1,
+    "paired_test": "Nadeau-Bengio corrected resampled t-test"
+  },
+  "xgboost": {
+    "available": true,
+    "version": "3.4.1"
+  },
+  "methods": {
+    "cvp": {
+      "auc_CAD": {
+        "mean": 0.928,
+        "sd": 0.0347
+      },
+      "auc_LAD": {
+        "mean": 0.8436,
+        "sd": 0.0305
+      },
+      "auc_LCX": {
+        "mean": 0.7114,
+        "sd": 0.0589
+      },
+      "auc_RCA": {
+        "mean": 0.7381,
+        "sd": 0.0471
+      },
+      "brier_CAD": {
+        "mean": 0.0991,
+        "sd": 0.0247
+      },
+      "brier_LAD": {
+        "mean": 0.1567,
+        "sd": 0.0176
+      },
+      "brier_LCX": {
+        "mean": 0.2071,
+        "sd": 0.0182
+      },
+      "brier_RCA": {
+        "mean": 0.1999,
+        "sd": 0.0155
+      },
+      "joint_nll": {
+        "mean": 1.563,
+        "sd": 0.0794
+      },
+      "count_accuracy": {
+        "mean": 0.4928,
+        "sd": 0.0447
+      },
+      "rps": {
+        "mean": 0.1471,
+        "sd": 0.0138
+      },
+      "coherence_violation_rate": {
+        "mean": 0.0,
+        "sd": 0.0
+      }
+    },
+    "lr": {
+      "auc_CAD": {
+        "mean": 0.9228,
+        "sd": 0.0355
+      },
+      "auc_LAD": {
+        "mean": 0.8329,
+        "sd": 0.0338
+      },
+      "auc_LCX": {
+        "mean": 0.6943,
+        "sd": 0.0582
+      },
+      "auc_RCA": {
+        "mean": 0.7339,
+        "sd": 0.0388
+      },
+      "brier_CAD": {
+        "mean": 0.1001,
+        "sd": 0.025
+      },
+      "brier_LAD": {
+        "mean": 0.1636,
+        "sd": 0.0165
+      },
+      "brier_LCX": {
+        "mean": 0.2168,
+        "sd": 0.0157
+      },
+      "brier_RCA": {
+        "mean": 0.2023,
+        "sd": 0.0155
+      },
+      "joint_nll": {
+        "mean": 1.7062,
+        "sd": 0.078
+      },
+      "count_accuracy": {
+        "mean": 0.4017,
+        "sd": 0.0566
+      },
+      "rps": {
+        "mean": 0.1581,
+        "sd": 0.0102
+      },
+      "coherence_violation_rate": {
+        "mean": 0.1948,
+        "sd": 0.0661
+      }
+    },
+    "xgboost": {
+      "auc_CAD": {
+        "mean": 0.9082,
+        "sd": 0.0447
+      },
+      "auc_LAD": {
+        "mean": 0.8406,
+        "sd": 0.0509
+      },
+      "auc_LCX": {
+        "mean": 0.7312,
+        "sd": 0.0567
+      },
+      "auc_RCA": {
+        "mean": 0.7297,
+        "sd": 0.0572
+      },
+      "brier_CAD": {
+        "mean": 0.1058,
+        "sd": 0.0271
+      },
+      "brier_LAD": {
+        "mean": 0.1626,
+        "sd": 0.0283
+      },
+      "brier_LCX": {
+        "mean": 0.2062,
+        "sd": 0.0187
+      },
+      "brier_RCA": {
+        "mean": 0.2022,
+        "sd": 0.0188
+      },
+      "joint_nll": {
+        "mean": 1.679,
+        "sd": 0.1169
+      },
+      "count_accuracy": {
+        "mean": 0.4194,
+        "sd": 0.0478
+      },
+      "rps": {
+        "mean": 0.1574,
+        "sd": 0.0131
+      },
+      "coherence_violation_rate": {
+        "mean": 0.1969,
+        "sd": 0.056
+      }
+    }
+  },
+  "paired_tests": {
+    "auc_CAD": {
+      "mean_diff_cvp_minus_xgboost": 0.0199,
+      "p_value": 0.358
+    },
+    "auc_LAD": {
+      "mean_diff_cvp_minus_xgboost": 0.0031,
+      "p_value": 0.8933
+    },
+    "auc_LCX": {
+      "mean_diff_cvp_minus_xgboost": -0.0198,
+      "p_value": 0.5189
+    },
+    "auc_RCA": {
+      "mean_diff_cvp_minus_xgboost": 0.0084,
+      "p_value": 0.7888
+    },
+    "brier_CAD": {
+      "mean_diff_cvp_minus_xgboost": -0.0067,
+      "p_value": 0.6261
+    },
+    "brier_LAD": {
+      "mean_diff_cvp_minus_xgboost": -0.0059,
+      "p_value": 0.6273
+    },
+    "brier_LCX": {
+      "mean_diff_cvp_minus_xgboost": 0.0009,
+      "p_value": 0.9247
+    },
+    "brier_RCA": {
+      "mean_diff_cvp_minus_xgboost": -0.0023,
+      "p_value": 0.8372
+    },
+    "joint_nll": {
+      "mean_diff_cvp_minus_xgboost": -0.116,
+      "p_value": 0.0468
+    },
+    "count_accuracy": {
+      "mean_diff_cvp_minus_xgboost": 0.0734,
+      "p_value": 0.0424
+    },
+    "rps": {
+      "mean_diff_cvp_minus_xgboost": -0.0103,
+      "p_value": 0.1489
+    },
+    "coherence_violation_rate": {
+      "mean_diff_cvp_minus_xgboost": -0.1969,
+      "p_value": 0.0
+    }
+  },
+  "conformal": {
+    "target_coverage": 0.9,
+    "empirical_coverage": 0.9031,
+    "mean_set_size_of_8": 4.79
+  },
+  "metric_direction": {
+    "auc": "higher",
+    "brier": "lower",
+    "joint_nll": "lower",
+    "count_accuracy": "higher",
+    "rps": "lower",
+    "coherence_violation_rate": "lower"
+  },
+  "runtime_s": 596.9
+}

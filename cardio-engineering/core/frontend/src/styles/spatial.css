@@ -1,0 +1,210 @@
+/* Shared dimensional surfaces — flattened to the pixel-native system.
+   Layout, semantic colours and data stay owned by the existing components.
+   No gradients, no glows, no glassmorphism, no oversized shadows: surfaces
+   are near-black flats with hairline borders, and perspective belongs to
+   decorative geometry only (app ancestors are never transformed, so fixed
+   tools and maps stay anchored). */
+
+.spatial-ui {
+  --shadow-card: none;
+  --shadow-raise: none;
+  --shadow-pop: none;
+}
+
+.spatial-shell, .spatial-auth {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Fixed backdrop: a faint square grid on the near-black shell — mathematical
+   lines, not colour washes. */
+.spatial-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  mask-image: linear-gradient(transparent, #000 18%, #000 70%, transparent);
+}
+.spatial-backdrop::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgb(var(--surface-border) / 0.28) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--surface-border) / 0.28) 1px, transparent 1px);
+  background-size: 72px 72px;
+}
+
+.spatial-backdrop__horizon {
+  position: absolute;
+  inset: 34% -20% auto;
+  height: 1px;
+  background: rgb(var(--surface-border-hi));
+  opacity: 0.5;
+}
+
+.spatial-backdrop__floor {
+  position: absolute;
+  top: 34%;
+  left: -40%;
+  width: 180%;
+  height: 130%;
+  transform-origin: center top;
+  transform: perspective(650px) rotateX(62deg);
+  mask-image: linear-gradient(transparent, #000 12%, transparent 80%);
+  opacity: 0.5;
+}
+.spatial-backdrop__floor::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgb(var(--surface-border) / 0.35) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--surface-border) / 0.35) 1px, transparent 1px);
+  background-size: 72px 72px;
+}
+
+/* Decorative orbs removed — the pixel motif lives in .pixel-* compositions. */
+.spatial-backdrop__orb,
+.spatial-backdrop__orb--near,
+.spatial-backdrop__orb--far {
+  display: none;
+}
+
+/* Flat surfaces: hairline borders, square geometry, no sheen, no glow. */
+.spatial-shell :where(.card-premium, .card-pop, .lift-3d, .spatial-card,
+  .bg-surface-raised.border, .bg-surface-panel.border),
+.spatial-auth :where(.spatial-card) {
+  box-shadow: none;
+  border-color: rgb(var(--surface-border));
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transition: border-color 180ms ease, background-color 180ms ease;
+}
+.spatial-shell :where(.bg-surface-raised.border, .spatial-card),
+.spatial-auth .spatial-card {
+  background-color: rgb(var(--surface-raised));
+}
+.spatial-shell .bg-surface-panel.border {
+  background-color: rgb(var(--surface-panel));
+}
+.spatial-shell .card-pop, .spatial-auth .card-pop { box-shadow: none; }
+
+.spatial-shell :where(.bg-surface-bg.border, pre.border, [role="tablist"]) {
+  box-shadow: none;
+}
+
+/* Solid chrome — no blurred glass on the shell header or primary navigation. */
+.spatial-shell > :where(header),
+.spatial-shell :where(aside[aria-label="Primary navigation"]) {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+  border-bottom: 1px solid rgb(var(--surface-border));
+}
+
+/* Current navigation item — flat orange tint with a square edge marker. */
+.spatial-shell :where(nav a[aria-current="page"]) {
+  background: rgb(var(--accent-brand) / 0.12);
+  box-shadow: inset 2px 0 0 rgb(var(--pixel-orange));
+  border-radius: 0;
+}
+
+/* Controls stay flat; hover feedback is a border/background shift only. */
+.spatial-ui :where(button.border, button.bg-accent-brand, a.border.bg-accent-brand, a.border.bg-surface-raised,
+  a.rounded-lg.bg-accent-brand, a.rounded-xl.bg-accent-brand) {
+  box-shadow: none;
+  transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease;
+}
+.spatial-ui :where(button.border:active:not(:disabled), button.bg-accent-brand:active:not(:disabled), a.border:active) {
+  translate: 0 1px;
+}
+
+.spatial-shell :where(input.border:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+  textarea.border, select.border),
+.spatial-auth :where(input.border:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+  textarea.border, select.border) {
+  background-color: rgb(var(--surface-bg));
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+
+.spatial-shell :where([role="dialog"], [role="menu"]),
+.spatial-auth :where([role="dialog"], [role="menu"]) {
+  box-shadow: none;
+  border-color: rgb(var(--surface-border));
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.spatial-shell :where(h1, h2), .spatial-auth h1 {
+  text-shadow: none;
+}
+
+/* The marketing page runs its own scoped pixel-native palette (.pixel-landing);
+   no broad app-surface selector reaches it. */
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .spatial-ui :where(.card-premium, .lift-3d, .spatial-card):hover {
+    border-color: rgb(var(--surface-border-hi));
+  }
+  .spatial-shell :where(button.border:not(:disabled), button.bg-accent-brand:not(:disabled), a.border):hover,
+  .spatial-auth :where(button.border:not(:disabled), button.bg-accent-brand:not(:disabled), a.border):hover {
+    border-color: rgb(var(--surface-border-hi));
+  }
+}
+@media (prefers-reduced-motion: reduce), (hover: none) {
+  .spatial-ui :where(.card-premium, .lift-3d, .spatial-card):hover { transform: none; }
+  .spatial-ui :where(button.border, button.bg-accent-brand):hover { transform: none; }
+  .spatial-ui :where(button.border:active, button.bg-accent-brand:active, a.border:active) { translate: none; }
+}
+.spatial-auth .spatial-card:hover { transform: none; }
+@media (max-width: 639px) {
+  .spatial-backdrop__floor { opacity: 0.3; background-size: 48px 48px; }
+}
+@media (forced-colors: active) {
+  .spatial-backdrop { display: none; }
+  .spatial-ui :where(.card-premium, .card-pop, .lift-3d, .spatial-card) { box-shadow: none; }
+}
+@media print {
+  .spatial-backdrop { display: none; }
+  .spatial-ui * { box-shadow: none !important; text-shadow: none !important; }
+}
+
+/* Live-data strip — flat panel, square status marker, no glow. */
+.live-data-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 18px;
+  margin: 16px 24px 0;
+  padding: 10px 14px;
+  border: 1px solid rgb(var(--surface-border));
+  border-radius: 4px;
+  background: rgb(var(--surface-raised));
+  backdrop-filter: none;
+  color: rgb(var(--ink-body));
+  font-size: 11px;
+}
+.live-data-controls__status, .live-data-controls__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.live-data-controls__dot { width: 6px; height: 6px; background: rgb(var(--ink-faint)); }
+.live-data-controls__dot.is-live { background: rgb(var(--accent-green)); }
+.live-data-controls__time { color: rgb(var(--ink-muted)); }
+.live-data-controls__unavailable { color: rgb(var(--ink-muted)); border-left: 1px solid rgb(var(--surface-border)); padding-left: 8px; }
+.live-data-controls button {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  min-height: 32px;
+  padding: 5px 8px;
+  border: 1px solid rgb(var(--surface-border));
+  border-radius: 2px;
+  background: rgb(var(--surface-raised-hi));
+  color: rgb(var(--ink-body));
+}
+.live-data-controls button:hover { color: rgb(var(--ink-primary)); border-color: rgb(var(--surface-border-hi)); }
+.live-data-controls button:focus-visible { outline: 2px solid rgb(var(--accent-brand) / 0.6); outline-offset: 2px; }
+.live-data-controls button:disabled { opacity: 0.5; cursor: default; }
+@media (max-width: 600px) { .live-data-controls { margin: 12px 16px 0; } .live-data-controls__actions { width: 100%; } .live-data-controls__time { flex-basis: 100%; padding-left: 14px; } }

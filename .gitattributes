@@ -1,0 +1,72 @@
+# Preserve imported snapshots and hash-pinned artifacts byte for byte.
+* -text whitespace=cr-at-eol
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.glb binary
+*.stl binary
+*.ply binary
+*.obj binary
+*.zip binary
+*.xlsx binary
+*.joblib binary
+*.pkl binary
+*.mp4 binary
+*.woff2 binary
+*.psd binary
+
+# ===== Merged from section and module files; each block is scoped to its folder =====
+# --- from cardio-engineering/modules/cardioscope/.gitattributes ---
+# Keep binary document bytes unchanged and avoid misleading text diffs.
+cardio-engineering/modules/cardioscope/**/*.pdf binary
+
+# --- from cardio-engineering/modules/cardioscope/artifacts/experiments/v2-lcx-rca-20261003-01/.gitattributes ---
+# Python CSV exports use standard CRLF records; preserve sealed export bytes.
+cardio-engineering/modules/cardioscope/artifacts/experiments/v2-lcx-rca-20261003-01/**/*.csv whitespace=cr-at-eol
+
+# --- from cardio-engineering/modules/cardiotwin/.gitattributes ---
+cardio-engineering/modules/cardiotwin/**/* text=auto eol=lf
+cardio-engineering/modules/cardiotwin/**/*.glb binary
+cardio-engineering/modules/cardiotwin/**/*.stl binary
+cardio-engineering/modules/cardiotwin/**/*.xlsx binary
+cardio-engineering/modules/cardiotwin/**/*.joblib binary
+cardio-engineering/modules/cardiotwin/**/*.png binary
+cardio-engineering/modules/cardiotwin/**/*.jpg binary
+cardio-engineering/modules/cardiotwin/**/*.webp binary
+cardio-engineering/modules/cardiotwin/**/*.mp4 binary
+cardio-engineering/modules/cardiotwin/**/*.pdf binary
+cardio-engineering/modules/cardiotwin/**/*.blend binary
+
+# --- from cardio-engineering/modules/cardiovascular-risk-viz-and-prediction/.gitattributes ---
+# Git attributes
+cardio-engineering/modules/cardiovascular-risk-viz-and-prediction/**/* text=auto eol=lf
+
+# --- from cardio-engineering/modules/cortwin/.gitattributes ---
+# Byte-exact artifacts: hash-asserted files must never be EOL-converted by git.
+# Contract-pinned sha256 values (manifest, CHECKSUMS.txt, model.json provenance)
+# are computed over raw bytes; Windows autocrlf previously corrupted
+# results.json in HEAD (D-18). `-text` stores/checks-out these paths verbatim.
+cardio-engineering/modules/cortwin/**/results.json -text
+cardio-engineering/modules/cortwin/**/model.json -text
+cardio-engineering/modules/cortwin/web/public/*.json -text
+cardio-engineering/modules/cortwin/web/public/models/*.glb -text
+cardio-engineering/modules/cortwin/config/*.json -text
+cardio-engineering/modules/cortwin/data/raw/** -text
+cardio-engineering/modules/cortwin/data/CHECKSUMS.txt -text
+cardio-engineering/modules/cortwin/assets/ready/*.glb -text
+cardio-engineering/modules/cortwin/tests/fixtures/** -text
+cardio-engineering/modules/cortwin/pipeline/artifacts/** -text
+
+# --- from cardio-engineering/modules/multimodal-hackathon-track-a/.gitattributes ---
+# Keep third-party and binary artefacts byte-exact on every platform: js/deps.js pins the vendored files by
+# sha384 and the model registry verifies each pipeline's sha256, so no line-ending conversion may touch them.
+cardio-engineering/modules/multimodal-hackathon-track-a/frontend/vendor/** -text
+cardio-engineering/modules/multimodal-hackathon-track-a/**/*.joblib binary
+cardio-engineering/modules/multimodal-hackathon-track-a/**/*.glb binary
+cardio-engineering/modules/multimodal-hackathon-track-a/**/*.woff2 binary
+cardio-engineering/modules/multimodal-hackathon-track-a/**/*.xlsx binary
+cardio-engineering/modules/multimodal-hackathon-track-a/**/*.png binary
+cardio-engineering/modules/multimodal-hackathon-track-a/**/*.pdf binary

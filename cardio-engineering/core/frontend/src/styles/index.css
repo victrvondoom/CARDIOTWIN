@@ -1,0 +1,926 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =============================================================================
+   CARDIOTON design system — core token set.
+
+   Pixel-native visual identity: a near-black planar canvas (#0D0E10), hairline
+   geometric borders, tightly tracked geometric sans-serif typography, and a
+   five-colour pixel ramp (red / orange / yellow / blue / green) that carries
+   the colour of the interface through square geometry — not gradients.
+
+   Dark is the primary experience: the near-black palette lives on :root.
+   A restrained light variant applies when the user explicitly picks light
+   (html without .dark). Token format: space-separated RGB triplets so
+   Tailwind's `<alpha-value>` substitution still works (`bg-accent-brand/20`).
+
+   Red, green and amber remain reserved for clinical status, never decoration.
+   ============================================================================= */
+
+:root {
+  /* Surfaces — near-black planar canvas */
+  --surface-bg:        13 14 16;     /* #0D0E10 primary canvas */
+  --surface-raised:    20 21 24;     /* #141518 flat panels */
+  --surface-raised-hi: 27 28 32;     /* #1B1C20 elevated panels */
+  --surface-border:    41 42 46;     /* #292A2E hairline */
+  --surface-border-hi: 64 65 71;     /* #404147 high-contrast hairline */
+  --surface-panel:     16 17 19;     /* #101113 sidebar / telemetry strips */
+
+  /* Ink */
+  --ink-primary: 247 247 244;  /* #F7F7F4 headings, key values */
+  --ink-body:    201 202 208;  /* readable body */
+  --ink-muted:   150 151 158;  /* #96979E clinical labels */
+  --ink-faint:   112 113 120;  /* fine print */
+  --ink-invert:  13 14 16;
+
+  /* Pixel ramp — the colour system of the interface.
+     Orange is the interaction accent; red/green/amber mark clinical status;
+     blue and the ramp colours appear inside pixel compositions. */
+  --pixel-red:    240 68 43;    /* #F0442B */
+  --pixel-orange: 255 121 0;    /* #FF7900 */
+  --pixel-yellow: 255 180 0;    /* #FFB400 */
+  --pixel-blue:   57 169 232;   /* #39A9E8 */
+  --pixel-green:  89 223 166;   /* #59DFA6 */
+
+  /* Semantic accents mapped onto the pixel ramp */
+  --accent-brand:      255 121 0;    /* #FF7900 — primary interaction accent */
+  --accent-brand-soft: 46 26 12;     /* deep warm wash */
+  --accent-brand-glow: 255 148 64;   /* brighter accent variant */
+  --accent-cyan:       57 169 232;   /* #39A9E8 — information blue */
+  --accent-green:      89 223 166;   /* #59DFA6 — stable / optimal */
+  --accent-red:        240 68 43;    /* #F0442B — clinical alert */
+  --accent-amber:      255 180 0;    /* #FFB400 — caution */
+  --accent-blue:       91 141 239;   /* #5B8DEF — clinical evidence links */
+  --accent-violet:     139 123 216;  /* muted multiomics violet */
+
+  /* Brand ramp — pixel-orange scale */
+  --brand-50:  38 24 12;
+  --brand-100: 56 32 12;
+  --brand-200: 84 42 12;
+  --brand-300: 128 58 8;
+  --brand-400: 190 80 4;
+  --brand-500: 255 121 0;
+  --brand-600: 255 148 64;
+  --brand-700: 255 172 110;
+  --brand-800: 255 205 160;
+  --brand-900: 255 232 210;
+
+  /* Geometry — the atomic unit of the system is the square */
+  --pixel-unit: 16px;
+  --grid-unit: 8px;
+  --radius-control: 4px;
+  --radius-panel: 2px;
+
+  /* Ambient washes (kept extremely subtle — colour comes from pixels) */
+  --aurora-a: rgba(255, 121, 0, 0.05);
+  --aurora-b: rgba(57, 169, 232, 0.04);
+  --aurora-c: rgba(247, 247, 244, 0.03);
+  --aurora-blur: 140px;
+
+  /* Grid background lines */
+  --grid-line: rgba(247, 247, 244, 0.04);
+  --grid-dot:  rgba(247, 247, 244, 0.07);
+
+  /* Evidence flash (citation hover) */
+  --evidence-flash-bg:   rgba(255, 121, 0, 0.12);
+  --evidence-flash-ring: rgba(255, 121, 0, 0.5);
+  --selection-bg:        rgba(255, 121, 0, 0.28);
+
+  /* Citation tints */
+  --citation-clinical: #5B8DEF;
+  --citation-policy:   #FF7900;
+
+  /* Scrollbar */
+  --scrollbar-thumb:       #2E2F34;
+  --scrollbar-thumb-hover: #3C3D42;
+  --scrollbar-track:       transparent;
+
+  /* Top bar */
+  --topbar-bg-plain:   rgba(13, 14, 16, 0.78);
+  --topbar-bg-frosted: rgba(13, 14, 16, 0.92);
+
+  /* Shadows — minimal contact depth only, never oversized glows */
+  --shadow-card:  0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-raise: 0 4px 10px -2px rgba(0, 0, 0, 0.5);
+  --shadow-pop:   0 12px 24px -8px rgba(0, 0, 0, 0.6);
+}
+
+/* Light variant — same geometry and pixel ramp, inverted surfaces. Applied
+   only when the user explicitly selects light (no .dark class on <html>). */
+html:not(.dark) {
+  --surface-bg:        250 250 248;  /* #FAFAF8 */
+  --surface-raised:    255 255 255;
+  --surface-raised-hi: 241 241 238;
+  --surface-border:    228 228 224;
+  --surface-border-hi: 198 198 192;
+  --surface-panel:     244 244 241;
+
+  --ink-primary: 20 21 24;
+  --ink-body:    63 64 70;
+  --ink-muted:   110 111 118;
+  --ink-faint:   154 155 162;
+  --ink-invert:  255 255 255;
+
+  --pixel-red:    214 58 34;
+  --pixel-orange: 232 93 0;
+  --pixel-yellow: 199 127 0;
+  --pixel-blue:   29 127 184;
+  --pixel-green:  23 138 95;
+
+  --accent-brand:      214 84 0;
+  --accent-brand-soft: 253 237 228;
+  --accent-brand-glow: 232 93 0;
+  --accent-cyan:       23 110 158;
+  --accent-green:      16 122 82;
+  --accent-red:        198 40 24;
+  --accent-amber:      176 108 0;
+  --accent-blue:       43 94 196;
+  --accent-violet:     112 84 184;
+
+  --brand-50:  255 244 235;
+  --brand-100: 253 232 213;
+  --brand-200: 250 212 170;
+  --brand-300: 244 184 122;
+  --brand-400: 232 140 40;
+  --brand-500: 214 84 0;
+  --brand-600: 190 72 0;
+  --brand-700: 160 60 0;
+  --brand-800: 128 48 0;
+  --brand-900: 96 36 0;
+
+  --aurora-a: rgba(214, 84, 0, 0.05);
+  --aurora-b: rgba(23, 110, 158, 0.04);
+  --aurora-c: rgba(20, 21, 24, 0.03);
+
+  --grid-line: rgba(20, 21, 24, 0.05);
+  --grid-dot:  rgba(20, 21, 24, 0.09);
+
+  --evidence-flash-bg:   rgba(214, 84, 0, 0.10);
+  --evidence-flash-ring: rgba(214, 84, 0, 0.45);
+  --selection-bg:        rgba(214, 84, 0, 0.22);
+
+  --citation-clinical: #2B5EC4;
+  --citation-policy:   #D65400;
+
+  --scrollbar-thumb:       #d6d3cc;
+  --scrollbar-thumb-hover: #a8a29e;
+
+  --topbar-bg-plain:   rgba(250, 250, 248, 0.8);
+  --topbar-bg-frosted: rgba(250, 250, 248, 0.92);
+
+  --shadow-card:  0 1px 3px rgba(20, 21, 24, 0.06), 0 1px 2px rgba(20, 21, 24, 0.04);
+  --shadow-raise: 0 4px 6px -1px rgba(20, 21, 24, 0.08), 0 2px 4px -2px rgba(20, 21, 24, 0.06);
+  --shadow-pop:   0 10px 15px -3px rgba(20, 21, 24, 0.1), 0 4px 6px -4px rgba(20, 21, 24, 0.08);
+}
+
+/* The .dark class marks the explicit dark choice for component-level selectors
+   (e.g. `.dark .tilt-glow`). The palette itself lives on :root — dark is the
+   default and primary experience. Selecting light removes .dark, which lets
+   the html:not(.dark) palette above take over. */
+
+/* =============================================================================
+   Base layer
+   ============================================================================= */
+@layer base {
+  html {
+    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color-scheme: dark;
+    scrollbar-gutter: stable;
+  }
+  html:not(.dark) { color-scheme: light; }
+  body {
+    background-color: rgb(var(--surface-bg));
+    color: rgb(var(--ink-body));
+    font-feature-settings: "ss01", "cv11";
+    transition: background-color 200ms ease, color 200ms ease;
+  }
+  *:focus-visible {
+    outline: 2px solid rgb(var(--accent-brand) / 0.6);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  ::selection {
+    background-color: var(--selection-bg);
+    color: rgb(var(--ink-primary));
+  }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 8px;
+    border: 2px solid rgb(var(--surface-bg));
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
+  ::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+}
+
+/* =============================================================================
+   Keyframes — defined in raw CSS so they're guaranteed to load regardless of
+   Tailwind JIT inclusion. Tailwind config also references these by name.
+   ============================================================================= */
+@keyframes pulse-soft       { 0%,100% { opacity: 1; } 50% { opacity: 0.55; } }
+@keyframes slide-in-right   { 0% { transform: translateX(20px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+@keyframes slide-in-down    { 0% { transform: translateY(-12px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+@keyframes fade-in          { 0% { opacity: 0; transform: translateY(4px); } 100% { opacity: 1; transform: translateY(0); } }
+@keyframes decision-reveal  { 0% { opacity: 0; transform: scale(0.94); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes decision-pulse   { 0% { opacity: 0; transform: scale(0.6); } 40% { opacity: 0.55; transform: scale(1.05); } 100% { opacity: 0; transform: scale(1.4); } }
+@keyframes shield-spin      { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
+@keyframes phi-backdrop     { 0% { opacity: 0; } 40% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes word-up          { 0% { opacity: 0; transform: translateY(14px); } 100% { opacity: 1; transform: translateY(0); } }
+@keyframes aurora-a         { 0%,100% { transform: translate3d(-10%, -8%, 0) scale(1); }    50% { transform: translate3d(8%, 6%, 0) scale(1.1); } }
+@keyframes aurora-b         { 0%,100% { transform: translate3d(12%, 4%, 0) scale(1.05); }   50% { transform: translate3d(-6%, -10%, 0) scale(0.95); } }
+@keyframes aurora-c         { 0%,100% { transform: translate3d(-4%, 14%, 0) scale(1); }     50% { transform: translate3d(10%, -8%, 0) scale(1.15); } }
+@keyframes sweep            { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+@keyframes logo-spin        { 0% { transform: rotate(0deg) scale(0.92); opacity: 0; } 40% { opacity: 1; } 100% { transform: rotate(360deg) scale(1); opacity: 1; } }
+@keyframes kbd-glow         { 0%,100% { box-shadow: 0 0 0 0 rgba(82,82,82,0), 0 0 0 0 rgba(115,115,115,0); } 50% { box-shadow: 0 0 0 1px rgba(82,82,82,0.35), 0 0 14px -2px rgba(82,82,82,0.45); } }
+@keyframes gradient-shift   { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+@keyframes edge-flow        { 0% { stroke-dashoffset: 80; } 100% { stroke-dashoffset: 0; } }
+@keyframes particle-drift   { 0% { transform: translate(0, 0); opacity: 0; } 20% { opacity: 0.7; } 80% { opacity: 0.7; } 100% { transform: translate(var(--dx, 40px), var(--dy, -30px)); opacity: 0; } }
+@keyframes ring-burst       { 0% { transform: scale(0.6); opacity: 0.6; } 100% { transform: scale(2.4); opacity: 0; } }
+@keyframes reveal-up        { 0% { opacity: 0; transform: translateY(18px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes float-y          { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes float-soft       { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-10px) rotate(0.6deg); } }
+@keyframes glow-pulse       { 0%,100% { opacity: 0.35; } 50% { opacity: 0.85; } }
+@keyframes orbit            { 0% { transform: rotate(0) translateX(var(--r, 40px)) rotate(0); } 100% { transform: rotate(360deg) translateX(var(--r, 40px)) rotate(-360deg); } }
+@keyframes count-flip       { 0% { transform: translateY(100%); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+@keyframes status-pulse     { 0%,100% { box-shadow: 0 0 0 0 rgba(64,64,64,0.55); } 50% { box-shadow: 0 0 0 6px rgba(64,64,64,0); } }
+@keyframes marquee-x        { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes fab-pulse        { 0%,100% { box-shadow: 0 0 0 0 rgba(18,18,18,0.45), 0 18px 40px -12px rgba(18,18,18,0.55); } 50% { box-shadow: 0 0 0 14px rgba(18,18,18,0), 0 18px 40px -12px rgba(18,18,18,0.55); } }
+@keyframes stagger-word {
+  /* Transform-only — opacity stays at .kinetic-word base value (1) so the
+     word is ALWAYS readable, even when the tab is hidden. */
+  0% { transform: translateY(8px); }
+  100% { transform: translateY(0); }
+}
+@keyframes aurora-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(40px, -30px, 0) scale(1.05); }
+}
+@property --conic-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@keyframes conic-spin   { to { --conic-angle: 360deg; } }
+@keyframes chart-draw-in { 0% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+@keyframes cardiac-pulse {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.08); filter: drop-shadow(0 0 8px rgba(242, 106, 50, 0.6)); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.04); filter: drop-shadow(0 0 4px rgba(242, 106, 50, 0.4)); }
+  70% { transform: scale(1); }
+}
+@keyframes ecg-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+@keyframes vessel-glow {
+  0%, 100% { box-shadow: 0 0 10px -2px rgba(242, 106, 50, 0.35); }
+  50% { box-shadow: 0 0 22px 2px rgba(242, 106, 50, 0.65); }
+}
+@keyframes telemetry-tick {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.cardiac-pulse { animation: cardiac-pulse 1.25s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+.cardio-card-glow { box-shadow: 0 4px 20px -4px rgba(242, 106, 50, 0.16); }
+.vessel-glow { animation: vessel-glow 2.5s ease-in-out infinite; }
+.telemetry-live { animation: telemetry-tick 1.5s ease-in-out infinite; }
+.ecg-grid {
+  background-size: 20px 20px;
+  background-image:
+    linear-gradient(to right, rgb(var(--surface-border) / 0.35) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(var(--surface-border) / 0.35) 1px, transparent 1px);
+}
+
+/* =============================================================================
+   Typography system — 9 semantic roles mapped to two families:
+   Inter (geometric sans — display, UI and data) and JetBrains Mono (technical).
+   Hierarchy comes from size, tracking and regular-to-medium weight — never
+   from ornamental faces or excessive boldness. No serif headlines by default.
+   Apply the class matching the element's ROLE, not its tag name.
+   ============================================================================= */
+@layer components {
+  /* 1. Display Primary — hero / major page headlines */
+  .text-display-primary {
+    font-family: "Inter", system-ui, sans-serif;
+    font-weight: 500;
+    line-height: 1.06;
+    letter-spacing: -0.035em;
+  }
+  /* 2. Display Secondary — secondary headings, section intros */
+  .text-display-secondary {
+    font-family: "Inter", system-ui, sans-serif;
+    font-weight: 400;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+  }
+  /* 3. UI Primary — nav, buttons, primary body text, standard interface */
+  .text-ui-primary {
+    font-family: "Inter", system-ui, sans-serif;
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+  /* 4. UI Secondary — descriptions, secondary labels, card copy, metadata */
+  .text-ui-secondary {
+    font-family: "Inter", system-ui, sans-serif;
+    font-weight: 400;
+    line-height: 1.55;
+  }
+  /* 5. Compact/Condensed — small nav labels, tags, dense UI, section markers */
+  .text-compact {
+    font-family: "Inter", system-ui, sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  /* 6. Editorial Italic — quotes, emphasis, highlighted words, annotations */
+  .text-editorial-italic {
+    font-family: "Inter", system-ui, sans-serif;
+    font-style: italic;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+  /* 7. Technical Monospace — technical info, IDs, developer labels, metadata */
+  .text-mono-tech {
+    font-family: "JetBrains Mono", Menlo, monospace;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+  /* 8. Micro/Footnote — footnotes, tiny annotations, fine print (11-12px, tight tracking) */
+  .text-micro {
+    font-family: "Inter", system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 11px;
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+  }
+  /* 9. Data/Numeric — numbers, stats, metrics, dates, counters, dashboard values */
+  .text-data-numeric {
+    font-family: "Inter", system-ui, sans-serif;
+    font-weight: 600;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+}
+
+/* =============================================================================
+   Component / utility classes — ported from the deployed reference.
+   Defined OUTSIDE @layer utilities so Tailwind JIT can't purge them when
+   they aren't yet referenced in source files. (Inside @layer utilities,
+   unused custom classes are stripped by content-aware tree-shaking.)
+   ============================================================================= */
+
+  /* ---------- Numeric / type ---------- */
+  .nums-tabular,
+  .tabular-nums { font-variant-numeric: tabular-nums; }
+  .display-tight { letter-spacing: -0.04em; }
+
+  /* --- Hero sentence --------------------------------------------------------
+     Large display sentences (dashboard headline, landing hero) — one geometric
+     sans, medium weight, tight tracking. Hierarchy from size and spacing,
+     not from a second typeface. */
+  .editorial-hero {
+    font-family: "Inter", system-ui, sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    text-wrap: balance;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  }
+
+  /* The accented word carries slightly more weight so the sentence has one
+     clear focal point without raising its voice. */
+  .editorial-hero .gradient-text-anim {
+    font-weight: 700;
+  }
+
+
+  /* ---------- Grid backgrounds ---------- */
+  .grid-bg {
+    background-image:
+      radial-gradient(circle at 1px 1px, var(--grid-dot) 1px, transparent 1.5px),
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 28px 28px, 28px 28px, 28px 28px;
+    background-position: 0 0, 0 0, 0 0;
+  }
+  .grid-bg-fade::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(900px 600px at 30% 0%, transparent 0%, rgb(var(--surface-bg)) 75%);
+  }
+
+  /* ---------- Premium card (institutional shadow + hover lift) ---------- */
+  .card-premium {
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 220ms ease, transform 220ms ease, border-color 220ms ease;
+  }
+  .card-premium:hover {
+    box-shadow: var(--shadow-raise);
+    transform: translateY(-2px);
+  }
+  .card-pop { box-shadow: var(--shadow-pop); }
+
+  /* ---------- 3D lift on cards ---------- */
+  .lift-3d {
+    transition: transform 280ms cubic-bezier(0.16,1,0.3,1), box-shadow 280ms ease;
+    transform-style: preserve-3d;
+  }
+  .lift-3d:hover {
+    transform: translateY(-2px) translateZ(0);
+    box-shadow: var(--shadow-pop);
+  }
+
+  /* ---------- Status dot pulse (live indicator) ---------- */
+  .status-dot-live { animation: status-pulse 2.4s ease-in-out infinite; }
+
+  /* ---------- Marquee for ticker ---------- */
+  .marquee-track { animation: marquee-x 38s linear infinite; }
+  .marquee-track:hover { animation-play-state: paused; }
+
+  /* ---------- Floating action button ---------- */
+  .fab-pulse { animation: fab-pulse 2.6s ease-in-out infinite; }
+
+  /* ---------- Aurora blob (legacy React component) ---------- */
+  .aurora-blob {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(120px);
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  /* ---------- Kinetic word (staggered fade+rise; opacity-safe) ---------- */
+  .kinetic-word {
+    display: inline-block;
+    opacity: 1;
+    animation: stagger-word 0.45s cubic-bezier(0.2, 0, 0, 1) both;
+    animation-delay: var(--delay, 0ms);
+  }
+
+  /* ---------- Static gradient text (safe fallback) ---------- */
+  .gradient-text,
+  .text-gradient-brand {
+    color: rgb(var(--accent-brand));
+    background-image: linear-gradient(
+      90deg,
+      rgb(var(--accent-brand)) 0%,
+      rgb(var(--accent-cyan)) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  @supports not (background-clip: text) {
+    .gradient-text,
+    .text-gradient-brand { -webkit-text-fill-color: rgb(var(--accent-brand)); }
+  }
+
+  /* ---------- Animated gradient text — slow shift across brand spectrum ---------- */
+  .gradient-text-anim {
+    background: linear-gradient(
+      90deg,
+      rgb(var(--accent-brand))      0%,
+      rgb(var(--accent-brand-glow)) 30%,
+      rgb(var(--accent-cyan))       60%,
+      rgb(var(--accent-violet))     90%,
+      rgb(var(--accent-brand))      100%
+    );
+    background-size: 220% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 12s ease-in-out infinite;
+  }
+  /* When kinetic-word + gradient-text-anim combine, run BOTH animations */
+  .kinetic-word.gradient-text-anim {
+    animation:
+      stagger-word 0.45s cubic-bezier(0.2, 0, 0, 1) both,
+      gradient-shift 12s ease-in-out infinite;
+    animation-delay: var(--delay, 0ms), 0s;
+  }
+  @supports not (background-clip: text) {
+    .gradient-text-anim {
+      -webkit-text-fill-color: rgb(var(--accent-brand));
+      color: rgb(var(--accent-brand));
+    }
+  }
+
+  /* ---------- Word-up entry animation ---------- */
+  .animate-word-up {
+    /* opacity:1 fallback so word stays visible if animation suppressed */
+    opacity: 1;
+    animation: word-up 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  /* ---------- Float-soft drift (hero shield) ---------- */
+  .animate-float-soft { animation: float-soft 6s ease-in-out infinite; }
+
+  /* ---------- Tilt card (3D parallax) ---------- */
+  .tilt-card {
+    transform-style: preserve-3d;
+    transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
+    transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms ease;
+    will-change: transform;
+  }
+  .tilt-card .tilt-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    opacity: var(--glow-opacity, 0);
+    transition: opacity 250ms ease;
+    background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%),
+                color-mix(in oklab, rgb(var(--accent-brand-glow)) 38%, transparent) 0%,
+                transparent 55%);
+    mix-blend-mode: plus-lighter;
+  }
+  .dark .tilt-card .tilt-glow { mix-blend-mode: screen; }
+  .tilt-card .tilt-sheen {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    opacity: var(--sheen-opacity, 0);
+    transition: opacity 250ms ease;
+    background: linear-gradient(105deg,
+                transparent 38%,
+                color-mix(in oklab, rgb(var(--accent-brand-glow)) 28%, transparent) 50%,
+                transparent 62%);
+    transform: translateX(calc((var(--mx-pct, 0) - 50) * 0.6%));
+  }
+
+  /* ---------- Cursor spotlight (hero mouse follow) ---------- */
+  .cursor-spotlight {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: radial-gradient(560px circle at var(--mx, 50%) var(--my, 40%),
+                color-mix(in oklab, rgb(var(--accent-brand-glow)) 22%, transparent) 0%,
+                transparent 55%);
+    opacity: 0;
+    transition: opacity 320ms ease;
+  }
+  .cursor-spotlight.is-active { opacity: 1; }
+
+  /* ---------- Conic rotating border (premium card edge) ---------- */
+  .conic-border {
+    position: relative;
+    isolation: isolate;
+  }
+  .conic-border::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(from var(--conic-angle),
+                color-mix(in oklab, rgb(var(--accent-brand-glow)) 70%, transparent),
+                color-mix(in oklab, rgb(var(--accent-cyan))       55%, transparent),
+                color-mix(in oklab, rgb(var(--accent-violet))     60%, transparent),
+                color-mix(in oklab, rgb(var(--accent-brand-glow)) 70%, transparent));
+    -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    animation: conic-spin 7s linear infinite;
+    opacity: 0.9;
+    pointer-events: none;
+  }
+
+  /* ---------- Mesh gradient background (animated) ---------- */
+  .mesh-bg {
+    background:
+      radial-gradient(1100px 700px at 12% 8%,  color-mix(in oklab, rgb(var(--accent-brand-glow)) 22%, transparent), transparent 55%),
+      radial-gradient(900px 600px at 92% 18%,  color-mix(in oklab, rgb(var(--accent-cyan))       18%, transparent), transparent 55%),
+      radial-gradient(800px 500px at 70% 95%,  color-mix(in oklab, rgb(var(--accent-violet))     18%, transparent), transparent 55%);
+    background-size: 200% 200%;
+    background-position: 0% 50%;
+    animation: gradient-shift 18s ease-in-out infinite;
+  }
+
+  /* ---------- Shimmer sweep on primary CTAs ---------- */
+  .btn-shimmer {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .btn-shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.32) 50%, transparent 65%);
+    transform: translateX(-120%);
+    transition: transform 700ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .btn-shimmer:hover::after { transform: translateX(120%); }
+
+  /* ---------- Animated grain overlay (hero) ---------- */
+  .grain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.06;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  /* ---------- Chart line/area draw-in (mount only, clip-path reveal) ---------- */
+  .chart-draw-in {
+    transform-box: fill-box;
+    transform-origin: 0% 50%;
+    animation: chart-draw-in 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  /* ---------- Reveal-on-scroll ---------- */
+  .reveal-init {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  .reveal-go { animation: reveal-up 620ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+  /* ---------- Magnetic button hover ring ---------- */
+  .magnet-ring { position: relative; }
+  .magnet-ring::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: inherit;
+    pointer-events: none;
+    background: conic-gradient(from 90deg, transparent 0%,
+                color-mix(in oklab, rgb(var(--accent-brand-glow)) 50%, transparent) 25%,
+                transparent 50%,
+                color-mix(in oklab, rgb(var(--accent-cyan))       40%, transparent) 75%,
+                transparent 100%);
+    opacity: 0;
+    transition: opacity 200ms ease;
+    filter: blur(6px);
+    z-index: -1;
+  }
+  .magnet-ring:hover::before {
+    opacity: 0.85;
+    animation: conic-spin 4s linear infinite;
+  }
+
+  /* ---------- Floating particle ---------- */
+  .particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: color-mix(in oklab, rgb(var(--accent-brand-glow)) 70%, transparent);
+    box-shadow: 0 0 8px color-mix(in oklab, rgb(var(--accent-brand-glow)) 60%, transparent);
+    animation: particle-drift var(--dur, 5s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
+  .particle.cyan {
+    background: color-mix(in oklab, rgb(var(--accent-cyan)) 70%, transparent);
+    box-shadow: 0 0 8px color-mix(in oklab, rgb(var(--accent-cyan)) 60%, transparent);
+  }
+  .particle.violet {
+    background: color-mix(in oklab, rgb(var(--accent-violet)) 70%, transparent);
+    box-shadow: 0 0 8px color-mix(in oklab, rgb(var(--accent-violet)) 60%, transparent);
+  }
+
+  /* ---------- Number flip cell ---------- */
+  .num-cell { display: inline-block; overflow: hidden; }
+  .num-cell .num-glyph {
+    display: inline-block;
+    animation: count-flip 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  /* ---------- Decision burst rings ---------- */
+  .burst-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    pointer-events: none;
+    border: 1.5px solid color-mix(in oklab, rgb(var(--accent-brand-glow)) 60%, transparent);
+    animation: ring-burst 1100ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .burst-ring.green { border-color: color-mix(in oklab, rgb(var(--accent-green)) 70%, transparent); }
+  .burst-ring.red   { border-color: color-mix(in oklab, rgb(var(--accent-red))   70%, transparent); }
+  .burst-ring.amber { border-color: color-mix(in oklab, rgb(var(--accent-amber)) 70%, transparent); }
+  .burst-ring.delay-1 { animation-delay: 120ms; }
+  .burst-ring.delay-2 { animation-delay: 240ms; }
+
+  /* ---------- Evidence flash (citation hover) ---------- */
+  [data-evidence-target] {
+    transition: background-color 200ms ease, box-shadow 200ms ease;
+  }
+  .evidence-flash {
+    background: var(--evidence-flash-bg) !important;
+    box-shadow: 0 0 0 2px var(--evidence-flash-ring) !important;
+    border-radius: 6px;
+  }
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* Content must never stay hidden behind a reveal. */
+  .pixel-reveal,
+  .aperture-reveal,
+  .reveal-init {
+    opacity: 1 !important;
+    clip-path: none !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}
+
+.page-skeleton { min-height: 40vh; background: linear-gradient(110deg, transparent, rgb(var(--surface-panel)), transparent); }
+@media (max-width: 639px) {
+  aside[aria-label="Primary navigation"] { width: 64px; }
+  aside[aria-label="Primary navigation"] nav a > span { display: none; }
+  aside[aria-label="Primary navigation"] > div > div { display: none; }
+  aside[aria-label="Primary navigation"] button[aria-label="Sign out of CARDIOTON"] > span { display: none; }
+}
+
+/* =============================================================================
+   Page typography — one geometric sans (Inter) for every page, JetBrains Mono
+   for code and telemetry. :where() keeps specificity at zero so any explicit
+   class still wins.
+   ============================================================================= */
+.page-typography {
+  font-family: "Inter", system-ui, sans-serif;
+  line-height: 1.55;
+  font-feature-settings: "tnum" 1, "cv11" 1;
+  -webkit-font-smoothing: antialiased;
+}
+.page-typography :where(h1, h2, h3, h4, button, summary, th, legend, label, nav, [role="tab"]) {
+  font-family: "Inter", system-ui, sans-serif;
+}
+.page-typography :where(h1) { font-weight: 500; letter-spacing: -0.025em; line-height: 1.12; }
+.page-typography :where(h2) { font-weight: 500; letter-spacing: -0.02em; line-height: 1.2; }
+.page-typography :where(h3, h4) { font-weight: 500; line-height: 1.3; }
+.page-typography :where(button, input, select, textarea) { font-family: inherit; }
+.page-typography :where(button) { font-weight: 500; letter-spacing: -0.01em; }
+.page-typography :where(code, pre, kbd, samp) { font-family: "JetBrains Mono", Menlo, monospace; }
+.page-typography :where(th) {
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.page-typography :where(p, li, dd, td) { font-weight: 400; }
+
+/* =============================================================================
+   Pixel engine — shared square-geometry primitives.
+   The atomic unit is the SQUARE: 8px grid cells, 16px pixel tiles, hairline
+   partitions. Colour comes from the pixel ramp, not from gradients.
+   ============================================================================= */
+
+/* Faint 8px engineering grid for section backdrops. */
+.pixel-grid-bg {
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: var(--grid-unit, 8px) var(--grid-unit, 8px);
+}
+
+/* Small square kicker label: an 8px square followed by tracked uppercase text. */
+.pixel-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgb(var(--ink-muted));
+}
+.pixel-kicker::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  background: rgb(var(--pixel-orange));
+}
+.pixel-kicker--red::before    { background: rgb(var(--pixel-red)); }
+.pixel-kicker--yellow::before { background: rgb(var(--pixel-yellow)); }
+.pixel-kicker--blue::before   { background: rgb(var(--pixel-blue)); }
+.pixel-kicker--green::before  { background: rgb(var(--pixel-green)); }
+
+/* Hairline section divider with square end markers. */
+.pixel-divider {
+  position: relative;
+  height: 1px;
+  background: rgb(var(--surface-border));
+}
+.pixel-divider::before,
+.pixel-divider::after {
+  content: "";
+  position: absolute;
+  top: -3.5px;
+  width: 8px;
+  height: 8px;
+  background: rgb(var(--surface-border-hi));
+}
+.pixel-divider::before { left: 0; }
+.pixel-divider::after  { right: 0; }
+
+/* Flat geometric panel — hairline border, square corners, no shadow. */
+.pixel-panel {
+  background: rgb(var(--surface-raised));
+  border: 1px solid rgb(var(--surface-border));
+  border-radius: var(--radius-panel, 2px);
+}
+
+/* A single pixel tile. */
+.pixel-tile {
+  display: block;
+  flex-shrink: 0;
+}
+
+/* Staggered square entry — used by PixelCluster / PixelMosaic cells.
+   Each cell animates once on mount; the direction comes from CSS vars. */
+@keyframes pixel-cell-in {
+  from {
+    opacity: 0;
+    transform: translate(var(--px-from-x, 0px), var(--px-from-y, 0px)) scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}
+.pixel-cell {
+  animation: pixel-cell-in 360ms cubic-bezier(0.2, 0, 0, 1) both;
+  animation-delay: var(--px-delay, 0ms);
+}
+
+/* Square status blink for live states (running / queued). */
+@keyframes pixel-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.pixel-blink { animation: pixel-blink 1.4s steps(2, jump-none) infinite; }
+
+/* Blocky wipe used by PixelTransition — a stepped clip reveal. */
+@keyframes pixel-wipe-out {
+  from { clip-path: inset(0 0 0 0); }
+  to   { clip-path: inset(0 0 0 100%); }
+}
+.pixel-wipe {
+  animation: pixel-wipe-out 260ms steps(8, jump-none) forwards;
+}
+
+/* Stepped ECG trace — square joints, crisp edges. */
+.pixel-ecg path,
+.pixel-ecg polyline {
+  shape-rendering: crispEdges;
+  stroke-linejoin: miter;
+}
+
+/* PixelReveal — blocky stepped-clip scroll reveal. */
+.pixel-reveal {
+  opacity: 0;
+  clip-path: inset(0 100% 0 0);
+  transition:
+    clip-path 520ms steps(6, jump-none),
+    opacity 320ms ease;
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.pixel-reveal.is-visible {
+  opacity: 1;
+  clip-path: inset(0 0 0 0);
+}
+
+/* PixelPulse — one-shot expanding square. */
+@keyframes pixel-pulse-once {
+  0%   { opacity: 0.9; transform: scale(1); }
+  100% { opacity: 0; transform: scale(2.6); }
+}
+.pixel-pulse-once {
+  animation: pixel-pulse-once 480ms cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+
+/* Square status chip (agent / task states). */
+.pixel-status {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  background: rgb(var(--ink-faint));
+}
+.pixel-status--queued    { background: transparent; box-shadow: inset 0 0 0 1px rgb(var(--ink-faint)); }
+.pixel-status--running   { background: rgb(var(--pixel-orange)); }
+.pixel-status--completed { background: rgb(var(--pixel-green)); }
+.pixel-status--failed    { background: rgb(var(--pixel-red)); }
+.pixel-status--awaiting  { background: rgb(var(--pixel-yellow)); }
+.pixel-status--canceled  { background: rgb(var(--ink-faint)); opacity: 0.5; }
+.pixel-status--idle      { background: transparent; box-shadow: inset 0 0 0 1px rgb(var(--surface-border-hi)); }
+.pixel-status--pulse     { animation: pixel-blink 1.2s steps(2, jump-none) infinite; }
