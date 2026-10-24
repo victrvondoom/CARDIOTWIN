@@ -1,36 +1,63 @@
 # CardioTwin
 
-**Developed by Victor von Doom**
+**Developed by Victor von Doom** · Co-authored by Mistral Vibe
 
-CardioTwin is a cardiology decision-support research prototype. It estimates the risk of coronary artery disease (CAD) and of stenosis in each major coronary artery from routine clinical data. It shows how reliable each number is, traces the figures to their inputs, and offers an interactive 3D echocardiography trainer. It is not a medical device and is not validated for clinical use.
-
----
-
-## Submission checklist
-
-| Item | Where |
-| --- | --- |
-| Author | Victor von Doom |
-| Co-author | Mistral Vibe |
-| Incubator | Not provided. Add here if applicable. |
-| Project title | CardioTwin |
-| Problem statement | [Problem statement](#problem-statement) |
-| Healthcare use case | [Healthcare use case](#healthcare-use-case) |
-| Technical stack | [Technical stack](#technical-stack) |
-| AI/ML model | `cardiotwin-lr-multivessel` v1.0.0. See [AI/ML model](#aiml-model). |
-| Demo video (15–20 min, unlisted YouTube) | **PENDING.** See [Demo video](#demo-video). |
-| Architecture diagram (PDF) | [docs/submission/CardioTwin_Architecture.pdf](docs/submission/CardioTwin_Architecture.pdf) |
-| Presentation (PDF) | [docs/submission/CardioTwin_Presentation.pdf](docs/submission/CardioTwin_Presentation.pdf) |
-| Open-source license | MIT: [LICENSE](LICENSE). Third-party licenses and module status: [NOTICE.md](NOTICE.md). |
-| Public access | The repository and both PDFs are public. No sign-in is needed to view them. |
+CardioTwin is a cardiology decision-support research prototype. It estimates the risk of coronary artery disease (CAD) and of stenosis in each major coronary artery from routine clinical data, states the uncertainty of every estimate, traces each figure to its inputs, and teaches echo anatomy interactively. It is not a medical device and is not validated for clinical use.
 
 ---
 
-## Problem statement
+## The hidden problem: four labels inside a one-label dataset
 
-Coronary artery disease is one of the leading causes of death worldwide. Whether a patient with chest pain or breathlessness needs invasive angiography depends on how a clinician weighs routine findings: symptoms, the ECG, the echocardiogram and blood tests. These findings often do not point clearly one way. Simple risk scores return a single number, usually without saying how uncertain it is or which coronary artery is most likely involved. Trainees have few chances to practise matching echocardiogram views to cardiac anatomy.
+Almost every published model on the Z-Alizadeh Sani dataset (UCI id 411) answers one question: *does this patient have CAD, yes or no?* The dataset contains 303 patients and 54 routine features — demographics, risk factors, symptoms, ECG, echo and labs — plus **four angiographically verified labels per patient**: the overall catheterisation result and, separately, whether the **LAD**, **LCX** and **RCA** arteries are stenotic. The standard workflow throws three of those four labels away.
 
-CardioTwin tests whether an open, transparent tool can help with these gaps. It estimates risk for each major coronary artery from data a clinician already has, states the uncertainty and the limits of each estimate, shows which inputs drove it, and teaches echo anatomy interactively. The tool supports clinical reasoning. It does not replace angiography or clinical judgment.
+That is the hidden problem CardioTwin targets: **not "is there disease", but "which artery is involved" — answered from the routine, non-invasive data a clinician already has**, before any catheterisation. Angiography answers it definitively, but it is invasive and is only performed after a decision has already been made. The per-artery question is what actually drives that decision (which territory to image, which lesion to expect), and it is buried inside a dataset that everyone else reduces to a single binary column.
+
+The repository's own evaluation artifact (`cardio-engineering/core/backend/app/cardiotwin/artifacts/evaluation.json`) makes the cost of ignoring this visible:
+
+| Question | Answerable from routine data? | Evidence |
+| --- | --- | --- |
+| "Does the patient have CAD?" | Well — ROC-AUC **0.913** (95% CI 0.876–0.944) | Direct model, 3×5 repeated stratified CV |
+| "Is the LAD narrowed?" | Moderately — ROC-AUC **0.823** (0.776–0.868) | Same protocol |
+| "Is the RCA narrowed?" | Barely — ROC-AUC **0.738** (0.682–0.788) | Same protocol |
+| "Is the LCX narrowed?" | Poorly — ROC-AUC **0.679** (0.615–0.734) | Same protocol |
+
+The aggregate answer is close to solved. The vessel-level answer is an open problem hiding in the same rows — and the gap between those two rows of the table (0.913 vs 0.679) is the problem statement. CardioTwin ships the vessel-level models **with their weakness stated** rather than hiding behind the single CAD number, because 302/303 rows of this dataset confirm that CAD *is* vessel disease: the overall label is true exactly when at least one target vessel is stenotic.
+
+### Two traps hidden in the same data
+
+1. **The leakage trap.** The dataset's own `LAD`, `LCX`, `RCA` and catheterisation columns nearly determine the CAD label. A model that includes them scores near-perfect on CAD while learning nothing clinically usable. CardioTwin's leakage audit excludes all four from the CAD inputs, and the exclusion is recorded in the evaluation artifact.
+2. **The consistency trap.** Probabilities must obey `P(CAD) ≥ max(P(LAD), P(LCX), P(RCA))`. A noisy-OR combination scores marginally higher (ROC-AUC 0.9161 vs 0.9121) but violates this logical constraint on **17.49%** of patients — a model that says "no CAD" while calling an artery stenotic. CardioTwin ships max-projection instead, which guarantees the constraint at a cost of −0.0006 ROC-AUC, and both figures are published side by side.
+
+### The hidden factors: each artery has a different routine signature
+
+Standardised coefficients from the shipped models (same evaluation artifact) show the per-artery signal is not the aggregate signal with a different label — it is a different fingerprint in ordinary clinical data:
+
+| Factor (routine data) | LAD | LCX | RCA |
+| --- | --- | --- | --- |
+| Typical chest pain | **+0.43** | +0.17 | +0.22 |
+| Region RWMA (wall-motion abnormality on echo) | **+0.33** | — | — |
+| Age | +0.31 | **+0.20** | +0.29 |
+| EF-TTE (ejection fraction) | −0.26 | — | — |
+| Nonanginal chest pain | −0.19 | — | — |
+| Poor R progression on ECG | — | — | **+0.21** |
+| Diabetes | — | +0.08 | **+0.34** |
+| ESR (inflammation marker) | — | — | **+0.24** |
+| Serum sodium | — | **+0.11** | — |
+| Creatinine | — | **+0.09** | — |
+| Sex (male) | — | — | **+0.21** |
+
+Reading the fingerprint: LAD disease surfaces as classic typical chest pain with a wall-motion abnormality in the LAD's echo territory. RCA disease instead surfaces through diabetes, inflammation (ESR) and poor R-wave progression on ECG. LCX disease — the weakest, most hidden target — leaves only faint traces in age, sodium and renal markers. This is exactly why LCX scores 0.679 while CAD scores 0.913: **the LCX hides.** No one sees this from the single-label view of the dataset, because the single-label view averages these fingerprints together.
+
+An independent confirmation comes from the `cardioscope` module (see [NOTICE.md](NOTICE.md) for its license), which ran a separately governed, hash-sealed final holdout evaluation on 61 locked records that its models had never seen — protocol, folds and seeds sealed under SHA-256 before any outcome was decoded, with a permanent execution guard preventing a second attempt:
+
+| Target | ROC-AUC | Accuracy | Recall |
+| --- | --- | --- | --- |
+| CAD | 0.9134 | 0.8525 | 0.9070 |
+| LAD | 0.8474 | 0.7213 | 0.8485 |
+| LCX | 0.6723 | 0.6066 | **0.2083** |
+| RCA | 0.6976 | 0.6721 | **0.2857** |
+
+The LCX/RCA recall is weak, and CardioTwin says so. A vessel-level tool that hides its weakest artery is not a tool; it is a liability. Reporting the weakness is the first step toward solving it.
 
 ---
 
@@ -50,6 +77,62 @@ This use case comes from the code in this repository:
 
 ---
 
+## Architecture
+
+The architecture diagram PDF is [docs/submission/CardioTwin_Architecture.pdf](docs/submission/CardioTwin_Architecture.pdf). The same system, drawn inline:
+
+```mermaid
+flowchart LR
+    subgraph Browser["Browser (one origin, :5173)"]
+        UI["React 18 dashboard<br/>(risk, case, 3D echo, calculators)"]
+        CALC["In-browser calculators &<br/>synthetic echo simulation"]
+    end
+    subgraph Gateway["FastAPI gateway (:8000, proxied via /api)"]
+        ROUTES["CardioTwin API routes"]
+        ART["Model artifact<br/>verified against SHA-256"]
+        PASS["Evidence passports<br/>(hash-sealed)"]
+        CROSS["CROSS-5 engine &<br/>interop receiver (:8091)"]
+    end
+    DB[("SQLite (default)<br/>PostgreSQL in Docker (optional)")]
+    UI -- "/api" --> ROUTES
+    ROUTES --> ART
+    ROUTES --> PASS
+    ROUTES --> CROSS
+    ROUTES --> DB
+    LLM["Optional LLM providers<br/>(only with -AI flag)"]
+    ROUTES -.-> LLM
+    CALC -. "no server calls" .- UI
+```
+
+The prediction pipeline, from the hidden four-label data to the transparent output:
+
+```mermaid
+flowchart TD
+    DS["Z-Alizadeh Sani dataset<br/>303 patients, 54 features, 4 labels<br/>(UCI 411, CC BY 4.0, CSV hash-pinned)"]
+    LA["Leakage audit:<br/>exclude LAD/LCX/RCA/Cath columns<br/>from CAD inputs"]
+    M1["Model: CAD (direct)"]
+    M2["Model: LAD stenosis"]
+    M3["Model: LCX stenosis"]
+    M4["Model: RCA stenosis"]
+    MP["Consistency projection:<br/>P(CAD) ≥ max(vessel probabilities)<br/>(noisy-OR rejected: violates logic on 17.49%)"]
+    CAL["Platt scaling<br/>(only if Brier gain > its standard error)"]
+    BOOT["Uncertainty:<br/>1,000 patient-level bootstrap resamples"]
+    UI2["Dashboard: risk, sensitivity,<br/>what-if, evidence passport"]
+    DS --> LA
+    LA --> M1 & M2 & M3 & M4
+    M2 & M3 & M4 --> MP
+    M1 --> MP
+    MP --> CAL --> BOOT --> UI2
+```
+
+- The browser uses one origin, `http://localhost:5173`. The Vite dev server proxies `/api` and `/mcp` to the FastAPI gateway on port 8000. The browser does not contact port 8000 or the interop receiver (port 8091) directly.
+- The gateway runs the CardioTwin model (its artifact is checked against a SHA-256 hash), the evidence passports, the CROSS-5 API and the interop receiver.
+- The database is a SQLite file by default. With `-Database postgres` it is PostgreSQL in Docker.
+- The calculators, the synthetic case and the probe simulation run in the browser.
+- The LLM providers are called only when the launcher is started with `-AI`.
+
+---
+
 ## What the demo shows
 
 | Route | What it does | Status |
@@ -59,22 +142,10 @@ This use case comes from the code in this repository:
 | `/cardiotwin/calculators` | Six echo calculators with worked examples | Working |
 | `/cardiotwin/case` | Evidence-linked synthetic case: measurements, uncertainty, what-if changes, CROSS-5 status | Working. Synthetic data. |
 | `/cardiotwin/risk` | CAD risk prediction, sensitivity and model trust | Working |
-| `/hub` | Overview of the inherited module projects | Overview works. Per-module status badges are not implemented. |
+| `/hub` | Overview of the module projects | Overview works. Per-module status badges are not implemented. |
 | `/medclear` | Plain-language summaries of clinical notes | Working |
 | `/pulse` | Pulse 911 emergency copilot studio | Simulation |
 | `/cross5` | CROSS-5 multiscale intersection engine | Experimental |
-
----
-
-## Architecture
-
-The architecture diagram is in [docs/submission/CardioTwin_Architecture.pdf](docs/submission/CardioTwin_Architecture.pdf).
-
-- The browser uses one origin, `http://localhost:5173`. The Vite dev server proxies `/api` and `/mcp` to the FastAPI gateway on port 8000. The browser does not contact port 8000 or the interop receiver (port 8091) directly.
-- The gateway runs the CardioTwin model (its artifact is checked against a SHA-256 hash), the evidence passports, the CROSS-5 API and the interop receiver.
-- The database is a SQLite file by default. With `-Database postgres` it is PostgreSQL in Docker.
-- The calculators, the synthetic case and the probe simulation run in the browser.
-- The LLM providers are called only when the launcher is started with `-AI`.
 
 ---
 
@@ -212,6 +283,7 @@ Results from the last recorded runs. The source is [docs/implementation/progress
 - This is a research prototype. It is not a medical device and is not CE-marked or FDA-cleared.
 - The model has not been validated externally and was trained on single-centre data. Its intervals describe sampling uncertainty, not performance in other hospitals.
 - Outputs are not diagnoses. Any use in care needs clinician review and confirmatory testing, such as angiography or CT, as appropriate.
+- The vessel-level outputs, especially LCX and RCA, are weak. They are published as open problems with stated uncertainty, not as usable predictors.
 - The 3D heart and the echo simulation are educational. Their two clocks are not frame-locked.
 - The calculators give raw values only. No clinical thresholds are applied.
 - Pulse 911 is a simulation, not a validated triage system.
@@ -230,7 +302,7 @@ CARDIOTWIN/
 ├── docs/submission/           architecture diagram and presentation (PDF)
 ├── cardio-engineering/
 │   ├── core/                  FastAPI backend and React dashboard
-│   ├── modules/               module project folders (see NOTICE.md)
+│   ├── modules/               licensed module project folders (see NOTICE.md)
 │   └── docs/
 ├── medclear/                  MedClear plain-language engine
 └── pulse/                     Pulse 911 application
